@@ -16,33 +16,30 @@
             <Button x:Name="btnAdd" Margin="0,5,0,0" Click="ButtonAddFile_Click" Height= "40" Width = "100" HorizontalAlignment="Center">Add File</Button>
                 <Label  Content="Pick an algorithm: " Target="{Binding ElementName=algorithm}"/>
                 <ComboBox x:Name="algorithm" Width="200" HorizontalAlignment="Left">
-                    <ComboBoxItem x:Name="aes">AES</ComboBoxItem>
-                    <ComboBoxItem x:Name="des" IsSelected="True">DES</ComboBoxItem>
+                    <ComboBoxItem x:Name="aes"  IsSelected="True">AES</ComboBoxItem>
+                    <ComboBoxItem x:Name="des">DES</ComboBoxItem>
                     <ComboBoxItem x:Name="tripleDes">TripleDes</ComboBoxItem>
                     <ComboBoxItem x:Name="rijndael">Rijndael</ComboBoxItem>
                     <ComboBoxItem x:Name="rc2">RC2</ComboBoxItem>
                 </ComboBox>
                 <Label Content="Pick a Cipher Mode: " Target="{Binding ElementName=cipherMode}"/>
                 <ComboBox x:Name="cipherMode" Width="200" HorizontalAlignment="Left">
-                    <ComboBoxItem x:Name="cbc">CBC</ComboBoxItem>
-                    <ComboBoxItem x:Name="cfb" IsSelected="True">CFB</ComboBoxItem>
-                    <ComboBoxItem x:Name="cts">CTS</ComboBoxItem>
+                    <ComboBoxItem x:Name="cbc" IsSelected="True">CBC</ComboBoxItem>
+                    <ComboBoxItem x:Name="cfb">CFB</ComboBoxItem>
                     <ComboBoxItem x:Name="ecb">ECB</ComboBoxItem>
-                    <ComboBoxItem x:Name="ofb">OFB</ComboBoxItem>
                 </ComboBox>
                 <Label Content="Pick a Padding Mode: " Target="{Binding ElementName=paddingMode}"/>
                 <ComboBox x:Name="paddingMode" Width="200" HorizontalAlignment="Left">
                     <ComboBoxItem x:Name="ansix923">ANSIX923</ComboBoxItem>
-                    <ComboBoxItem x:Name="iso10126" IsSelected="True">ISO10126</ComboBoxItem>
-                    <ComboBoxItem x:Name="none">None</ComboBoxItem>
+                    <ComboBoxItem x:Name="iso10126">ISO10126</ComboBoxItem>
                     <ComboBoxItem x:Name="pcks7">PKCS7</ComboBoxItem>
-                    <ComboBoxItem x:Name="zeros">Zeros</ComboBoxItem>
+                    <ComboBoxItem x:Name="zeros" IsSelected="True">Zeros</ComboBoxItem>
                 </ComboBox>
-                <Label Content="Provide the key: "></Label>
-                <TextBox x:Name="key"></TextBox>
-                <Button x:Name="btnEncrypt" Click="BtnEncrypt_Click">Encrypt</Button>
+                <Label Content="Provide the key (leave empty if you want a randomly generated key): "></Label>
+                <TextBox x:Name="key" ></TextBox>
+                <Button x:Name="btnEncrypt" Click="BtnEncrypt_Click" Margin ="0,5,0,5" Height= "40" Width = "100" HorizontalAlignment="Center">Encrypt</Button>
                 <ScrollViewer>
-                    <TextBox x:Name="encryptedText" Height="200" Width="800"/>
+                    <TextBox x:Name="encryptedText" Height="200" TextWrapping="WrapWithOverflow" />
                 </ScrollViewer>
             </StackPanel>
         </ScrollViewer>

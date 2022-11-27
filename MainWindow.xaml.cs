@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Security.Cryptography;
 
 namespace SymmetricEncryption
 {
@@ -25,6 +26,7 @@ namespace SymmetricEncryption
         public MainWindow()
         {
             InitializeComponent();
+           
         }
 
         private void ButtonAddFile_Click(object sender, RoutedEventArgs e)
@@ -38,7 +40,10 @@ namespace SymmetricEncryption
 
         private void BtnEncrypt_Click(object sender, RoutedEventArgs e)
         {
-            encryptedText.Text = CryptoAlgorithms.EncryptText(algorithm.Text, key.Text, textEditor.Text,cipherMode.Text, paddingMode.Text);
+            string text =  CryptoAlgorithms.EncryptText(algorithm.Text, key.Text, textEditor.Text,cipherMode.Text, paddingMode.Text);
+            encryptedText.Text = text;
         }
+
+        
     }
 }

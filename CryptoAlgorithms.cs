@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.IO.Packaging;
 using System.Linq;
 using System.Security.Cryptography;
@@ -14,67 +15,67 @@ namespace SymmetricEncryption
         public static string EncryptText(string algorithmName, string key, string text, string cipherMode, string paddingMode)
         {
             //return $"{algorithm} {key} {cipherMode} {paddingMode}";
-            string encryptedText = "xxxx";
+            string encryptedText = "";
+            SymmetricAlgorithm algorithm;
             switch (algorithmName)
             {
-                case ("aes"): encryptedText = EncryptAes();
+                case ("DES"): 
+                   algorithm = DES.Create();
                     break;
-                case ("des"): encryptedText = EncryptDes();
+                case ("Rijndael"):
+                    algorithm = Rijndael.Create();
                     break;
-                case ("rijndael"): encryptedText = EncryptRijndael();
+                case ("TripleDes"): 
+                    algorithm = TripleDES.Create();
                     break;
-                case ("TripleDes"): encryptedText = EncryptTripleDes(key, text, getCipherMode(cipherMode), getPaddingMode(paddingMode));
+                case ("RC2"): 
+                    algorithm = RC2.Create();
                     break;
-                case ("rc2"): encryptedText = EncryptRC2();
-                    break;  
+                default:
+                    algorithm = Aes.Create();
+                    break;
             }
+            encryptedText = ExecuteEncryptionAlgorithm(algorithm, key, text, getCipherMode(cipherMode), getPaddingMode(paddingMode));
             return encryptedText;
 
         }
-        private static string EncryptAes()
+        private static string ExecuteEncryptionAlgorithm(SymmetricAlgorithm algorithm, string key, string text, CipherMode cipherMode, PaddingMode paddingMode)
         {
-            throw new NotImplementedException();
-        }
-        private static string EncryptDes()
-        {
-            throw new NotImplementedException();
-        }
-        private static string EncryptRC2()
-        {
-            throw new NotImplementedException();
-        }
-        private static string EncryptRijndael()
-        {
-            throw new NotImplementedException();
-        }
-        private static string EncryptTripleDes(string key, string text, CipherMode cipherMode, PaddingMode paddingMode)
-        {
-            //throw new NotImplementedException();
-            byte[] inputArray = UTF8Encoding.UTF8.GetBytes(text);
-            TripleDESCryptoServiceProvider tripleDES = new TripleDESCryptoServiceProvider();
             try
             {
-                tripleDES.Key = UTF8Encoding.UTF8.GetBytes(key);
+                algorithm.Key = UTF8Encoding.UTF8.GetBytes(key);
             }
-            catch(ArgumentException e)
+            catch (ArgumentException ae)
             {
-                tripleDES.GenerateKey();
+                algorithm.GenerateKey();
             }
-            tripleDES.Mode = cipherMode;
-            tripleDES.Padding =paddingMode;
-            ICryptoTransform cTransform = tripleDES.CreateEncryptor();
-            byte[] resultArray = cTransform.TransformFinalBlock(inputArray, 0, inputArray.Length);
-            tripleDES.Clear();
-            return Convert.ToBase64String(resultArray, 0, resultArray.Length);
+            catch(CryptographicException)
+            {
+                algorithm.GenerateKey();
+            }
+            byte[] inputBytes = UTF8Encoding.UTF8.GetBytes(text);
+            algorithm.GenerateIV();
+            algorithm.FeedbackSize = 8;
+            algorithm.Padding = paddingMode;
+            algorithm.Mode = cipherMode;
+            byte[] encryptedBytes;
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                using (CryptoStream cryptoStream = new CryptoStream(memoryStream, algorithm.CreateEncryptor(), CryptoStreamMode.Write))
+                {
+                    cryptoStream.Write(inputBytes, 0, inputBytes.Length);
+                }
+                 encryptedBytes = memoryStream.ToArray();
+             }
+          
+            return Convert.ToBase64String(encryptedBytes);
         }
         private static CipherMode getCipherMode(string cipherMode)
         {
             switch(cipherMode)
             {
                 case ("ECB"): return CipherMode.ECB;
-                case ("CBC"): return CipherMode.CBC;
                 case ("CFB"): return CipherMode.CFB;
-                case ("CTS"): return CipherMode.CTS;
                 default: return CipherMode.CBC;
             }
         }
@@ -82,12 +83,10 @@ namespace SymmetricEncryption
         {
             switch (paddingMode)
             {
-                case ("None"): return PaddingMode.None;
-                case ("Zeros"): return PaddingMode.Zeros;
                 case ("ISO10126"): return PaddingMode.ISO10126;
                 case ("PKCS7"): return PaddingMode.PKCS7;
                 case ("ANSIX923"): return PaddingMode.ANSIX923;
-                default: return PaddingMode.None;
+                default: return PaddingMode.Zeros;
 
             }
            
